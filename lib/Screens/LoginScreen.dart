@@ -52,9 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal:25.0,vertical: 20),
                   child: CircleAvatar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.deepPurple,
                       radius: 50,
-                      child: Image.asset('images/agriculture.png')),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('images/agriculture.png',color: Colors.white,),
+                      )),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal:25.0),

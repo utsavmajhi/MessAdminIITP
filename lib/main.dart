@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:messadmin/Screens/LoginScreen.dart';
+import 'Screens/RegistrationScreen.dart';
 void main() {
   runApp(MyApp());
 }
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
         initialRoute: LoginScreen.id,
       routes: {
           LoginScreen.id:(context) => LoginScreen(),
+          RegistrationScreen.id:(context) => RegistrationScreen(),
 
       },
     );
