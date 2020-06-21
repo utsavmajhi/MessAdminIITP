@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "992159649358",
+    "firebase_url": "https://iitpmeogger.firebaseio.com",
+    "project_id": "iitpmeogger",
+    "storage_bucket": "iitpmeogger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992159649358:android:1de16b20b9e88fc4fbfd1f",
+        "android_client_info": {
+          "package_name": "com.creatordev.messadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992159649358-tfuopqggifqeofo2tqb06n22uvttssgl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHQ9Ml2QQrzMV_B9jZwkJSlSpDVKgEfgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992159649358-tfuopqggifqeofo2tqb06n22uvttssgl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
