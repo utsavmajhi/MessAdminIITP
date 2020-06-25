@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:messadmin/Screens/HomeScreen.dart';
+import 'package:messadmin/Screens/RegistrationScreen.dart';
 import 'roundedbuttonsmall.dart';
 import 'rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -12,8 +14,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
-  String email;
-  String password;
+  String email="";
+  String password="";
   bool passwordVisible;
   bool showSpinner = false;
   final resetemail = TextEditingController();
@@ -287,6 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .toString());
                         // await _showSnackBar('Email is verified',Colors.lightGreen);
                         setState(() {
+                          Navigator.pushReplacementNamed(context, HomeScreen.id);
                           showSpinner = false;
                         });
                       } else {
@@ -331,8 +334,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () {
                               //goto registration page
-//                            Navigator.pushNamed(
-//                                context, RegistrationScreen.id);
+                             Navigator.pushNamed(context, RegistrationScreen.id);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(left: 5),

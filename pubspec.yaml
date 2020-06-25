@@ -39,6 +39,7 @@ dependencies:
   table_calendar: ^2.2.3
   shared_preferences: ^0.5.7+3
   rflutter_alert: ^1.0.3
+  strings: ^0.1.2
 
 dev_dependencies:
   flutter_test:
