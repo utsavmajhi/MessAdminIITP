@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messadmin/PassArguments/AdditemScreen1.dart';
 import 'package:messadmin/Screens/rounded_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +19,20 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
   final additemname = TextEditingController();
   final additemprice = TextEditingController();
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero,(){
+      AdditemScreen1 addentrysc1Data=ModalRoute.of(context).settings.arguments;
+      setState(() {
+
+      });
+
+    });
+  }
+  @override
   Widget build(BuildContext context) {
+    AdditemScreen1 addentrysc1Data=ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
@@ -56,7 +70,7 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
                                     contentPadding: EdgeInsets.only(
                                         left: 15, bottom: 11, top: 11, right: 15),
                                     labelText: 'Enter Item Name',
-                                    prefixIcon: Icon(Icons.email),
+                                    prefixIcon: Icon(Icons.fastfood),
                                     labelStyle: TextStyle(
                                       color: Color(0xFFB2BCC8),
                                       fontWeight: FontWeight.w600,
@@ -65,13 +79,14 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
                                   ),
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.number,
                                   controller: additemprice,
                                   textAlign: TextAlign.start,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.only(
                                         left: 15, bottom: 11, top: 11, right: 15),
                                     labelText: 'Enter Item Price',
-                                    prefixIcon: Icon(Icons.email),
+                                    prefixIcon: Icon(Icons.monetization_on),
                                     labelStyle: TextStyle(
                                       color: Color(0xFFB2BCC8),
                                       fontWeight: FontWeight.w600,
@@ -87,13 +102,14 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
                           padding: const EdgeInsets.only(left:18.0,right: 18,top: 0,bottom: 10),
                           child: RoundedButton(
                             title: "Add Item",
-                            colour: Color(0xFF3F6AFE),
+                            colour: Colors.deepPurple,
                             onPressed: (){
-                              foodlist.add(FoodItemModel(additemname.text,20));
-                              Navigator.pop(context);
-                              setState(()async{
+                              setState(() {
+                                foodlist.add(FoodItemModel(additemname.text,double.parse(additemprice.text)));
+                                additemprice.clear();
+                                additemname.clear();
+                                Navigator.pop(context);
                               });
-
                             },
                           ),
                         )
@@ -110,6 +126,38 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                        backgroundColor: Colors.purple,
+                        radius: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child:addentrysc1Data.food_cat=="Breakfast"?SvgPicture.asset('images/breakfast.svg',fit: BoxFit.contain,):addentrysc1Data.food_cat=="Lunch"?SvgPicture.asset('images/lunch2.svg',fit: BoxFit.contain,):addentrysc1Data.food_cat=="Snacks"?SvgPicture.asset('images/snacks2.svg',fit: BoxFit.contain,):SvgPicture.asset('images/dinner.svg',fit: BoxFit.contain,),
+                        )),
+                  ),
+                  Text(addentrysc1Data.food_cat,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text("Date:${addentrysc1Data.date}",
+                  style: TextStyle(
+                    fontSize: 15
+                  ),)
+                ],
+              ),
+
+            ],
+          ),
           Expanded(
             child: ListView.builder(
                 itemCount: foodlist.length,

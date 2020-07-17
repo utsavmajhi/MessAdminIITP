@@ -84,9 +84,44 @@ class _AddFoodItemState extends State<AddFoodItem> {
                         SizedBox(
                           height: 30,
                         ),
+                        Text(
+                          'Select Food Category',
+                          style: TextStyle(
+                              fontSize: 22
+                          ),
+                        ),
+                        DropdownButton<String>(
+                          value: _foodcat ,
+                          icon: Icon(Icons.fastfood,
+                            color: Colors.redAccent,),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              _foodcat = newValue;
+                            });
+                          },
+                          items: <String>['None','Breakfast','Lunch','Snacks','Dinner']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500
+                                ),),
+                            );
+                          }).toList(),
+                        ),
                         GestureDetector(
                           onTap: (){
-                            Navigator.pushNamed(context,EntryFinalScreen.id,arguments: AdditemScreen1(changetimeformat(_dateTime)));
+                            Navigator.pushNamed(context,EntryFinalScreen.id,arguments: AdditemScreen1(date:changetimeformat(_dateTime),food_cat: _foodcat));
                           },
                           child: CircleAvatar(
                             radius: 28,
