@@ -3,8 +3,11 @@ import 'package:messadmin/Screens/HomeScreen.dart';
 import 'package:messadmin/Screens/RegistrationScreen.dart';
 import 'roundedbuttonsmall.dart';
 import 'rounded_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+final _firestore=Firestore.instance;
 
 class LoginScreen extends StatefulWidget {
   static String id='login_screen';
@@ -13,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   bool _obscureText = true;
   String email="";
   String password="";
@@ -288,10 +292,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             _authenticatedUser.isEmailVerified
                                 .toString());
                         // await _showSnackBar('Email is verified',Colors.lightGreen);
-                        setState(() {
-                          Navigator.pushReplacementNamed(context, HomeScreen.id);
-                          showSpinner = false;
+                        _firestore.collection("UsersData").document(_authenticatedUser.uid).get().then((value) async{
+                          String typeuser=value.data['typeofuser'];
+                          String workspace=value.data['workspace'];
+                          String username=value.data['username'];
+                          print(typeuser);
+                          print(workspace);
+                          if(typeuser!='1'){
+                            setState(() {
+                              showSpinner = false;
+                            });
+                            _showSnackBar(
+                                'The user is not Authorised to use Mess Transact App',
+                                Colors.red[600]);
+                          }else{
+                            if(await setsharedprefs(username, workspace, _authenticatedUser.uid)=="true"){
+                              setState(() {
+                                showSpinner = false;
+                              });
+                              Navigator.pushReplacementNamed(context, HomeScreen.id);
+                            }
+                          }
                         });
+
                       } else {
                         print("Email is :" +
                             _authenticatedUser.isEmailVerified
@@ -360,6 +383,16 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+  Future<String> setsharedprefs(String username,String workspace,String uid) async
+  {
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    await sharedPreferences.setString('username', username);
+    await sharedPreferences.setString('workspace', workspace);
+    await sharedPreferences.setString('UID', uid);
+    sharedPreferences.commit();
+    return "true";
+
+  }
 }
 //credentials checks
 String checkparameters(
@@ -374,7 +407,7 @@ String checkparameters(
       return "Password Length is less than 6";
     } else {
         return "Checks passed";
-
     }
   }
+
 }

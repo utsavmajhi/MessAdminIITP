@@ -8,6 +8,9 @@ import 'package:strings/strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'FoodItemModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final _firestore=Firestore.instance;
 class EntryFinalScreen extends StatefulWidget {
   static String id='entryfinal_screen';
   @override
@@ -16,24 +19,52 @@ class EntryFinalScreen extends StatefulWidget {
 
 class _EntryFinalScreenState extends State<EntryFinalScreen> {
   List<FoodItemModel> foodlist=[];
+  final _auth = FirebaseAuth.instance;
+  String workspace="";
   final additemname = TextEditingController();
   final additemprice = TextEditingController();
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  //snackbar initialises
+  _showSnackBar(@required String message, @required Color colors) {
+    if (_scaffoldKey != null) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: colors,
+          content: new Text(message),
+          duration: new Duration(seconds: 4),
+        ),
+      );
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getvaluesfromshared();
     Future.delayed(Duration.zero,(){
       AdditemScreen1 addentrysc1Data=ModalRoute.of(context).settings.arguments;
+
       setState(() {
 
       });
 
     });
   }
+  Future<bool> getvaluesfromshared() async
+  {
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    workspace=sharedPreferences.getString('workspace');
+    setState(() {
+
+    });
+
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
     AdditemScreen1 addentrysc1Data=ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         title: Text("Add Food Entries"),
@@ -192,12 +223,23 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
             child: RoundedButton(title: "Submit",colour: Colors.deepPurple,
             onPressed: (){
               //confirm with a message
+              if(foodlist.length==0){
+                  _showSnackBar("List can't be Empty! You need to atleast one item on menu",Colors.red[600]);
+              }
+              else{
+                //list is not empty
+                for(int i=0;i<foodlist.length;i++){
+                  setvaluestodatabase(addentrysc1Data.food_cat,addentrysc1Data.date,foodlist[i].foodname,foodlist[i].foodprice,i+1);
+                }
+                _showSnackBar("Successfully Updated",Colors.green[600]);
+              }
 
             },),
           )
         ],
       ),
     );
+    
   }
 
  ListView getFooditemList() {
@@ -211,4 +253,16 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
           );
         });
  }
+  setvaluestodatabase(String food_cat, String date, String foodname, double foodprice, int index) async{
+    try{
+        await _firestore.collection('DailyFoodMenu').document(workspace).collection("Menu").document(date).collection(food_cat).document(date+food_cat+foodname.trim().toLowerCase()+foodprice.toString()).setData({
+        'itemid':date+food_cat+foodname.trim().toLowerCase()+foodprice.toString(),
+        'itemname':foodname.trim().toLowerCase(),
+        'itemprice':foodprice,
+        'date':date,
+      });
+    }catch(e){
+        _showSnackBar(e.message,Colors.red[600]);
+    }
+  }
 }

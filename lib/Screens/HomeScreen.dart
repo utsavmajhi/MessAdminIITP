@@ -6,6 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:strings/strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+final _firestore=Firestore.instance;
+
 class HomeScreen extends StatefulWidget {
   static String id='home_screen';
   @override
@@ -13,6 +16,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String workspace="";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var auth=FirebaseAuth.instance.currentUser().then((value){
+      _firestore.collection("UsersData").document(value.uid).get().then((value){
+        setState(() {
+          workspace=value.data['workspace'];
+        });
+      });
+    });
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,23 +44,35 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal:8.0,vertical: 18),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: 30,
-                      child: Image.asset('images/iitpatna.png'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 30,
+                          child: Image.asset('images/iitpatna.png'),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          'Mess Admin Portal',
+                          style: GoogleFonts.wellfleet(
+                              fontSize: 28,
+                              color: Colors.white
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 8,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("WORKSPACE: $workspace",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
+
+                      ],
                     ),
-                    Text(
-                      'Mess Admin Portal',
-                      style: GoogleFonts.wellfleet(
-                          fontSize: 28,
-                          color: Colors.white
-                      ),
-                    ),
+
                   ],
                 ),
               ),

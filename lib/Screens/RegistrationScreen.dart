@@ -15,9 +15,11 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  String _workspacetype='Choose your Mess/Workspace';
   bool _obscureText = true;
   bool _obscureText2=true;
   String email="";
+  List<String> workspaces=["Choose your Mess/Workspace"];
   String password="";
   String conpassword="";
   String _fullname="";
@@ -33,6 +35,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     super.initState();
     passwordVisible = false;
     passwordVisible2=false;
+    _firestore.collection("Workspaces").getDocuments().then((value){
+      for(int i=0;i<value.documents.length;i++){
+        workspaces.add(value.documents[i].data['WorkspaceName']);
+      }
+    }).then((value){
+      setState(() {
+
+      });
+    });
 
   }
   //snackbar initialises
@@ -213,6 +224,39 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:30.0),
+                  child: DropdownButton<String>(
+                    value: _workspacetype ,
+                    isExpanded: true,
+                    icon: Icon(Icons.room_service,
+                      color: Colors.red,),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: TextStyle(color: Colors.black54),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.black87,
+                    ),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        _workspacetype = newValue;
+                      });
+                    },
+                    items: workspaces
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500
+                          ),),
+                      );
+                    }).toList(),
+                  ),
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -226,7 +270,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         onPressed: () async {
                           //backends starts
 
-                          String check = checkparameters(_fullname,email.toLowerCase().trim(), password,conpassword);
+                          String check = checkparameters(_fullname,email.toLowerCase().trim(), password,conpassword,_workspacetype);
                           if (check == "Checks passed") {
                             setState(() {
                               showSpinner=true;
@@ -243,8 +287,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 await _firestore.collection('UsersData').document(uid).setData({
                                   'username':capitalize(_fullname),
                                   'institutemail':email.toLowerCase().trim(),
-                                  'Extra1':"default",
-                                  'Extra2':"default",
+                                  'typeofuser':"1",
+                                  'workspace':_workspacetype,
                                 });
                                 setState(() {
                                   showSpinner=false;
@@ -315,7 +359,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 }
 //credentials checks
 String checkparameters(@required String fullname,
-    @required String institutemail, @required String password, @required String conpassword) {
+    @required String institutemail, @required String password, @required String conpassword, String workspacetype) {
   if (institutemail.isEmpty ||
       password.isEmpty ||
       institutemail == null ||
@@ -328,7 +372,11 @@ String checkparameters(@required String fullname,
       if(password!=conpassword){
         return "Passwords do not match ! Please Check";
       }else{
-        return "Checks passed";
+        if(workspacetype=="Choose your Mess/Workspace"){
+          return "Please Select your current Mess/Workspace";
+        }else{
+          return "Checks passed";
+        }
       }
 
 
