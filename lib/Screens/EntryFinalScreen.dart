@@ -8,6 +8,7 @@ import 'package:strings/strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'FoodItemModel.dart';
+import 'package:messadmin/Screens/roundedbuttonsmall.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final _firestore=Firestore.instance;
@@ -22,7 +23,9 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
   final _auth = FirebaseAuth.instance;
   String workspace="";
   final additemname = TextEditingController();
+  var edititemname = TextEditingController();
   final additemprice = TextEditingController();
+  var edititemprice = TextEditingController();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   //snackbar initialises
   _showSnackBar(@required String message, @required Color colors) {
@@ -193,27 +196,130 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
             child: ListView.builder(
                 itemCount: foodlist.length,
                 itemBuilder: (BuildContext context, int position){
-                  return Card(
-                    child: ListTile(
-                      title:Text("Item No: ${position+1}"),
-                      subtitle: Text(foodlist[position].foodname),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text("Price",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500
-                          ),),
-                          Text("Rs ${foodlist[position].foodprice}",
-                          style: TextStyle(
-                            color: Colors.red[600],
-                            fontSize: 15
-                          ),),
-                        ],
+                  return GestureDetector(
+                    onTap: (){
+                      print(position);
+                      //open modal screen
+                      edititemname=TextEditingController(text: foodlist[position].foodname);
+                      edititemprice=TextEditingController(text: foodlist[position].foodprice.toString());
+                      showModalBottomSheet<void>(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return SingleChildScrollView(
+                            child: Container(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding:  EdgeInsets.only(
+                                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Column(
+                                          children: <Widget>[
+                                            TextFormField(
+                                              controller: edititemname,
+                                              textAlign: TextAlign.start,
+                                              decoration: InputDecoration(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 15, bottom: 11, top: 11, right: 15),
+                                                labelText: 'Enter Item Name',
+                                                prefixIcon: Icon(Icons.fastfood),
+                                                labelStyle: TextStyle(
+                                                  color: Color(0xFFB2BCC8),
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 17,
+                                                ),
+                                              ),
+                                            ),
+                                            TextFormField(
+                                              keyboardType: TextInputType.number,
+                                              controller: edititemprice,
+                                              textAlign: TextAlign.start,
+                                              decoration: InputDecoration(
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 15, bottom: 11, top: 11, right: 15),
+                                                labelText: 'Enter Item Price',
+                                                prefixIcon: Icon(Icons.monetization_on),
+                                                labelStyle: TextStyle(
+                                                  color: Color(0xFFB2BCC8),
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 17,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left:18.0,right: 18,top: 0,bottom: 10),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          RoundedButtonSmall(
+                                            title: "Confirm Edits",
+                                            colour: Colors.deepPurple,
+                                            onPressed: (){
+                                              setState(() {
+                                                foodlist[position].foodname=edititemname.text;
+                                                foodlist[position].foodprice=double.parse(edititemprice.text);
+                                                edititemprice.clear();
+                                                edititemname.clear();
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                          ),
+                                          RoundedButtonSmall(
+                                            title: "Delete Item",
+                                            colour: Colors.red[600],
+                                            onPressed: (){
+                                              setState(() {
+                                                foodlist.removeAt(position);
+                                                edititemprice.clear();
+                                                edititemname.clear();
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Card(
+                      child: ListTile(
+                        title:Text("Item No: ${position+1}"),
+                        subtitle: Text(foodlist[position].foodname),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text("Price",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                            ),),
+                            Text("Rs ${foodlist[position].foodprice}",
+                            style: TextStyle(
+                              color: Colors.red[600],
+                              fontSize: 15
+                            ),),
+                          ],
+                        ),
+
+
                       ),
-
-
                     ),
                   );
                 }),
@@ -231,6 +337,10 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
                 for(int i=0;i<foodlist.length;i++){
                   setvaluestodatabase(addentrysc1Data.food_cat,addentrysc1Data.date,foodlist[i].foodname,foodlist[i].foodprice,i+1);
                 }
+                setState(() {
+                  foodlist.clear();
+                });
+
                 _showSnackBar("Successfully Updated",Colors.green[600]);
               }
 
