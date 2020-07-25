@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:messadmin/Screens/AddFoodItem.dart';
+import 'package:messadmin/Screens/EditItemsdateSelec.dart';
 import 'package:messadmin/Screens/LogDataAnalysis.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           InkWell(
                             onTap: (){
                               //
-
+                                Navigator.pushNamed(context, EditItemdateSelec.id);
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -149,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Hero(tag: "LogData",
-                                        child: SvgPicture.asset('images/register.svg',height: 100,)),
+                                        child: SvgPicture.asset('images/register.svg',height: 100)),
                                     SizedBox(
                                       height: 20 ,
                                     ),

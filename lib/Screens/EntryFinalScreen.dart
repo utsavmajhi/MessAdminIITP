@@ -20,7 +20,6 @@ class EntryFinalScreen extends StatefulWidget {
 
 class _EntryFinalScreenState extends State<EntryFinalScreen> {
   List<FoodItemModel> foodlist=[];
-  final _auth = FirebaseAuth.instance;
   String workspace="";
   final additemname = TextEditingController();
   var edititemname = TextEditingController();
@@ -44,14 +43,6 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
     // TODO: implement initState
     super.initState();
     getvaluesfromshared();
-    Future.delayed(Duration.zero,(){
-      AdditemScreen1 addentrysc1Data=ModalRoute.of(context).settings.arguments;
-
-      setState(() {
-
-      });
-
-    });
   }
   Future<bool> getvaluesfromshared() async
   {

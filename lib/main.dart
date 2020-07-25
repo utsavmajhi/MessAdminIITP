@@ -5,6 +5,8 @@ import 'package:messadmin/Screens/HomeScreen.dart';
 import 'Screens/AddFoodItem.dart';
 import 'Screens/EntryFinalScreen.dart';
 import 'Screens/LogDataAnalysis.dart';
+import 'Screens/EditItemsdateSelec.dart';
+import 'Screens/EditItemsFinalSc.dart';
 void main() {
   runApp(MyApp());
 }
@@ -22,6 +24,9 @@ class MyApp extends StatelessWidget {
           EntryFinalScreen.id:(context) => EntryFinalScreen(),
           AddFoodItem.id:(context) => AddFoodItem(),
           LogDataAnalysis.id:(context) => LogDataAnalysis(),
+          EditItemdateSelec.id:(context) => EditItemdateSelec(),
+          EditItemsFinalSc.id:(context) => EditItemsFinalSc(),
+
 
 
       },
