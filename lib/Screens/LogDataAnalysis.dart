@@ -7,6 +7,7 @@ import 'package:strings/strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:messadmin/PassArguments/LogDatesc1args.dart';
 
 class LogDataAnalysis extends StatefulWidget {
   static String id='logdata_screen';
@@ -21,8 +22,9 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
   final List<Map<String, String>> listOfColumnsLunch = [];
   final List<Map<String, String>> listOfColumnsSnacks = [];
   final List<Map<String, String>> listOfColumnsDinner = [];
-  Stream Customstream(){
-      var ref=Firestore.instance.collection("CloudDataEvents").document("Mess 1").collection("DataAnalysis").document("24-07-2020").collection("Breakfast").getDocuments().then((value){
+
+  Stream Customstream(LogDatesc1args logDatesc1args){
+      var ref=Firestore.instance.collection("CloudDataEvents").document(logDatesc1args.workspace).collection("DataAnalysis").document(logDatesc1args.date).collection("Breakfast").getDocuments().then((value){
         listOfColumns.clear();
         for(int i=0;i<value.documents.length;i++){
           listOfColumns.add({
@@ -36,7 +38,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
         }
 
       });
-      Firestore.instance.collection("CloudDataEvents").document("Mess 1").collection("DataAnalysis").document("24-07-2020").collection("Lunch").getDocuments().then((value){
+      Firestore.instance.collection("CloudDataEvents").document(logDatesc1args.workspace).collection("DataAnalysis").document(logDatesc1args.date).collection("Lunch").getDocuments().then((value){
         listOfColumnsLunch.clear();
         for(int i=0;i<value.documents.length;i++){
           listOfColumnsLunch.add({
@@ -49,7 +51,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
           });
         }
       });
-      Firestore.instance.collection("CloudDataEvents").document("Mess 1").collection("DataAnalysis").document("24-07-2020").collection("Snacks").getDocuments().then((value){
+      Firestore.instance.collection("CloudDataEvents").document(logDatesc1args.workspace).collection("DataAnalysis").document(logDatesc1args.date).collection("Snacks").getDocuments().then((value){
         listOfColumnsSnacks.clear();
         for(int i=0;i<value.documents.length;i++){
           listOfColumnsSnacks.add({
@@ -62,7 +64,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
           });
         }
       });
-      Firestore.instance.collection("CloudDataEvents").document("Mess 1").collection("DataAnalysis").document("24-07-2020").collection("Dinner").getDocuments().then((value){
+      Firestore.instance.collection("CloudDataEvents").document(logDatesc1args.workspace).collection("DataAnalysis").document(logDatesc1args.date).collection("Dinner").getDocuments().then((value){
         listOfColumnsDinner.clear();
         for(int i=0;i<value.documents.length;i++){
           listOfColumnsDinner.add({
@@ -75,14 +77,13 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
           });
         }
       });
-     return Firestore.instance.collection("CloudDataEvents").document("Mess 1").collection("DataAnalysis").document("27-07-2020").get().asStream();
+     return Firestore.instance.collection("CloudDataEvents").document(logDatesc1args.workspace).collection("DataAnalysis").document(logDatesc1args.date).get().asStream();
   }
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getvaluesfromshared();
-
   }
   Future<bool> getvaluesfromshared() async
   {
@@ -96,14 +97,24 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
   }
   @override
   Widget build(BuildContext context) {
+    LogDatesc1args logDatesc1args=ModalRoute.of(context).settings.arguments;
     return Scaffold(
+
+      appBar: AppBar(
+        leading: BackButton(
+            color: Colors.black
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.limeAccent[100],
       body: StreamBuilder(
-          stream: Customstream(),
+          stream: Customstream(logDatesc1args),
           builder:(context,snapshot){
               if(!snapshot.hasData){
                   return Center(
-                    child: Text("Loading"),
+                    child: Text("Loading...",style: TextStyle(fontSize: 22,color: Colors.red,fontWeight: FontWeight.bold),),
                   );
               }
               return SingleChildScrollView(
@@ -125,6 +136,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
                           child: Text(
                             'BreakFast',
                             style: TextStyle(
+                              decoration: TextDecoration.underline,
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
 
@@ -181,6 +193,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
                           child: Text(
                             'Lunch',
                             style: TextStyle(
+                              decoration: TextDecoration.underline,
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
 
@@ -237,6 +250,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
                           child: Text(
                             'Snacks',
                             style: TextStyle(
+                              decoration: TextDecoration.underline,
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
 
@@ -293,6 +307,7 @@ class _LogDataAnalysisState extends State<LogDataAnalysis> {
                           child: Text(
                             'Dinner',
                             style: TextStyle(
+                              decoration: TextDecoration.underline,
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
 

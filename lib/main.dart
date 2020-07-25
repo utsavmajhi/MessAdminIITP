@@ -7,6 +7,7 @@ import 'Screens/EntryFinalScreen.dart';
 import 'Screens/LogDataAnalysis.dart';
 import 'Screens/EditItemsdateSelec.dart';
 import 'Screens/EditItemsFinalSc.dart';
+import 'Screens/LogDateSelecSc1.dart';
 void main() {
   runApp(MyApp());
 }
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
           LogDataAnalysis.id:(context) => LogDataAnalysis(),
           EditItemdateSelec.id:(context) => EditItemdateSelec(),
           EditItemsFinalSc.id:(context) => EditItemsFinalSc(),
+          LogDateSelecSc1.id:(context) => LogDateSelecSc1(),
 
 
 

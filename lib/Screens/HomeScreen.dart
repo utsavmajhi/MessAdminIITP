@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:messadmin/Screens/AddFoodItem.dart';
 import 'package:messadmin/Screens/EditItemsdateSelec.dart';
 import 'package:messadmin/Screens/LogDataAnalysis.dart';
+import 'package:messadmin/Screens/LogDateSelecSc1.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -173,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           InkWell(
                             onTap: (){
                               //goto screen
-                              Navigator.pushNamed(context, LogDataAnalysis.id);
+                              Navigator.pushNamed(context, LogDateSelecSc1.id);
 
                             },
                             child: Padding(
