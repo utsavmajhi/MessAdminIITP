@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:messadmin/PassArguments/LogDatesc1args.dart';
 
 class LogDateSelecSc1 extends StatefulWidget {
-  static String id='edititemfinalsc_screen';
+  static String id='logdateselecc_screen';
 
   @override
   _LogDateSelecSc1State createState() => _LogDateSelecSc1State();

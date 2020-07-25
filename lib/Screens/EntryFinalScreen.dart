@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'FoodItemModel.dart';
 import 'package:messadmin/Screens/roundedbuttonsmall.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 final _firestore=Firestore.instance;
 class EntryFinalScreen extends StatefulWidget {
@@ -325,14 +326,40 @@ class _EntryFinalScreenState extends State<EntryFinalScreen> {
               }
               else{
                 //list is not empty
-                for(int i=0;i<foodlist.length;i++){
-                  setvaluestodatabase(addentrysc1Data.food_cat,addentrysc1Data.date,foodlist[i].foodname,foodlist[i].foodprice,i+1);
-                }
-                setState(() {
-                  foodlist.clear();
-                });
+                Alert(
+                  context: context,
+                  type: AlertType.warning,
+                  title: "Confirmation!",
+                  desc: "Are you sure ?",
+                  buttons: [
+                    DialogButton(
+                      child: Text(
+                        "Submit!",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: ()async {
+                        for(int i=0;i<foodlist.length;i++){
+                          setvaluestodatabase(addentrysc1Data.food_cat,addentrysc1Data.date,foodlist[i].foodname,foodlist[i].foodprice,i+1);
+                        }
+                        setState(() {
+                          foodlist.clear();
+                        });
+                        Navigator.pop(context);
+                        _showSnackBar("Successfully Updated",Colors.green[600]);
+                      },
+                      color: Colors.green[600],
+                    ),
+                    DialogButton(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      color: Colors.red[600],
+                    )
+                  ],
+                ).show();
 
-                _showSnackBar("Successfully Updated",Colors.green[600]);
               }
 
             },),

@@ -9,7 +9,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:strings/strings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:messadmin/Screens/LoginScreen.dart';
+final _auth = FirebaseAuth.instance;
 final _firestore=Firestore.instance;
 
 class HomeScreen extends StatefulWidget {
@@ -24,8 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    var uid="";
     var auth=FirebaseAuth.instance.currentUser().then((value){
+      //uid=value.uid;
       _firestore.collection("UsersData").document(value.uid).get().then((value){
+
         setState(() {
           workspace=value.data['workspace'];
         });
@@ -34,9 +40,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   }
+  Future<String> setsharedprefs(String username,String workspace,String uid) async
+  {
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    await sharedPreferences.setString('username', username);
+    await sharedPreferences.setString('workspace', workspace);
+    await sharedPreferences.setString('UID', uid);
+    sharedPreferences.commit();
+    return "true";
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
       backgroundColor:Colors.deepPurple,
       body: SafeArea(
         child: Stack(
@@ -254,7 +275,94 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
         ),
       ),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundImage: AssetImage('images/dummypro.png'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:1.0,top: 5),
+                    child: Text("Welcome!",style: TextStyle(color: Colors.white,fontSize: 25),),
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  image: AssetImage("images/header.jpeg"),
+                  fit: BoxFit.cover,
+                )
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.track_changes),
+              title: Text('Change Workspace'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Sign Out'),
+              onTap: () async{
+                Alert(
+                  context: context,
+                  type: AlertType.warning,
+                  title: "Warning",
+                  desc: "You will be Logged Out",
+                  buttons: [
+                    DialogButton(
+                      child: Text(
+                        "Log Out!",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: ()async {
+                        _signOut();//signout from firebase
+                        SharedPreferences preferences = await SharedPreferences.getInstance();
+                        await preferences.clear();
+                        // Navigator.pushReplacementNamed(context, LoginScreen.id);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()
+                            ),
+                            ModalRoute.withName("/Login_screen")
+                        );
+                      },
+                      color: Colors.red[600],
+                    ),
+                    DialogButton(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      color: Colors.blueAccent,
+                    )
+                  ],
+                ).show();
+                //Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
 
     );
+  }
+  _signOut() async {
+    await _auth.signOut();
   }
 }

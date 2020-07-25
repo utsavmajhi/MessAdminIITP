@@ -30,6 +30,42 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: implement initState
     super.initState();
     passwordVisible = false;
+    getCurrentUser();
+  }
+  void getCurrentUser () async{
+    try{
+      final user=await _auth.currentUser();
+      setState(() {
+        showSpinner=true;
+      });
+      if(user!=null&&(user.isEmailVerified==true))
+      {
+        _firestore.collection("UsersData").document(user.uid).get().then((value){
+          if(value.data['typeofuser']=='1'){
+            setsharedprefs(value.data['username'],value.data['workspace'], user.uid).then((value){
+              Navigator.pushReplacementNamed(context, HomeScreen.id);
+              setState(() {
+                showSpinner=false;
+              });
+
+            });
+          }
+        });
+        setState(() {
+          showSpinner=false;
+        });
+
+      }else{
+        setState(() {
+          showSpinner=false;
+        });
+      }
+    }
+    catch(e)
+    {
+      print(e);
+    }
+
   }
   //snackbar initialises
   _showSnackBar(@required String message, @required Color colors) {
@@ -303,7 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               showSpinner = false;
                             });
                             _showSnackBar(
-                                'The user is not Authorised to use Mess Transact App',
+                                'The user is not Authorised to use Mess Admin App',
                                 Colors.red[600]);
                           }else{
                             if(await setsharedprefs(username, workspace, _authenticatedUser.uid)=="true"){
